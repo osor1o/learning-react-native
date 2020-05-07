@@ -43,17 +43,14 @@ export default () => {
     verifyLocationPermission();
 
     if (hasLocationPermission) {
-      setInterval(() => {
-        Geolocation.getCurrentPosition(
-          (position) => {
-            if (position.coords.latitude && position.coords.longitude) {
-              setUserPosition({
-                latitude: position.coords.latitude,
-                longitude: position.coords.longitude,
-              });
-            }
+      Geolocation.watchPosition((position) => {
+        if (position.coords.latitude && position.coords.longitude) {
+          setUserPosition({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
           });
-      }, 5 * 1000);
+        }
+      });
     }
   }, [hasLocationPermission]);
 
@@ -73,19 +70,11 @@ export default () => {
         >
            <Marker
             coordinate={userPosition}
-            title="Osório"
-            description="quarto"
-          />
-          <Marker
-            coordinate={{
-              latitude: userPosition.latitude - 0.01,
-              longitude: userPosition.longitude - 0.01,
-            }}
-            title="Osório2"
-            description="sala"
-            liteMode
+            title="You"
           />
         </MapView>
+        <Text style={styles.text}>LAT: {userPosition.latitude}</Text>
+        <Text style={styles.text}>LONG {userPosition.longitude}</Text>
       </View>
     </>
   );
@@ -96,17 +85,18 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     width,
     height: height -25,
-    justifyContent: 'flex-end',
+    // justifyContent: 'flex-end',
     alignItems: 'center',
   },
   map: {
     ...StyleSheet.absoluteFillObject,
   },
   text: {
+    backgroundColor: 'white',
     margin: 10,
     paddingVertical: 10,
     paddingHorizontal: 20,
-    fontSize: 25,
+    fontSize: 20,
     fontWeight: 'bold',
     borderColor: 'black',
     borderWidth: 2,
